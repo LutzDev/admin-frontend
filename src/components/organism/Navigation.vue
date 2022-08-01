@@ -30,13 +30,13 @@ const handleClose = (key: string, keyPath: string[]) => {
         Manage project
       </el-menu-item>
       <el-menu-item index="/intervention/dialogue">
-        Manage dialogue
-      </el-menu-item>
-      <el-menu-item index="/intervention/media">
-        Upload media
+        Manage dialog
       </el-menu-item>
       <el-menu-item index="/intervention/variable">
         Manage variables
+      </el-menu-item>
+      <el-menu-item disabled index="/intervention/media">
+        Upload media
       </el-menu-item>
     </el-sub-menu>
 

@@ -67,7 +67,7 @@ const handleEdit = async (data: Project) => {
   try {
     const resp = await axios({
       method: 'put',
-      url: `http://127.0.0.1:3000/v1/dialogue/${data.project}`,
+      url: `http://127.0.0.1:3000/v1/dialogue/${data.dialogue}`,
       data: fileData,
     })
     ElNotification({

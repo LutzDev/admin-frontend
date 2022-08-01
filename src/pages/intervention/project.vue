@@ -193,14 +193,9 @@ onMounted(() => {
 
 <template>
   <h1 class="mb-4 text-size-xl">
-    Manage project
+    Manage projects
   </h1>
-  <p v-if="tableData.length === 1">
-    {{ tableData.length }} project found
-  </p>
-  <p v-if="tableData.length > 1">
-    {{ tableData.length }} projects found
-  </p>
+
   <el-table :data="tableData" class="w-full">
     <el-table-column label="Name">
       <template #default="scope">
