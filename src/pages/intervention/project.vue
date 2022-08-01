@@ -12,6 +12,7 @@ interface Project {
   start: string
   end: string
   active?: Boolean
+  dialogue?: string
 }
 
 const current = new Date()
@@ -103,17 +104,28 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Project)
 
 const handleDelete = async (index: number, row: Project) => {
   try {
-    const resp = await axios({
-      method: 'delete',
-      url: `http://127.0.0.1:3000/v1/project/${row._id}`,
-    })
-    ElNotification({
-      title: 'Success',
-      message: `${resp.data.message}`,
-      type: 'success',
-      position: 'top-left',
-    })
-    handleTable()
+    if (!row.dialogue) {
+      const resp = await axios({
+        method: 'delete',
+        url: `http://127.0.0.1:3000/v1/project/${row._id}`,
+      })
+
+      ElNotification({
+        title: 'Success',
+        message: `${resp.data.message}`,
+        type: 'success',
+        position: 'top-left',
+      })
+      handleTable()
+    }
+    else {
+      ElNotification({
+        title: 'Warning',
+        message: `Before that, delete the linked dialog with the ID: ${row.dialogue}`,
+        type: 'warning',
+        position: 'top-left',
+      })
+    }
   }
   catch (error: any) {
     ElNotification({
@@ -183,10 +195,23 @@ onMounted(() => {
   <h1 class="mb-4 text-size-xl">
     Manage project
   </h1>
+  <p v-if="tableData.length === 1">
+    {{ tableData.length }} project found
+  </p>
+  <p v-if="tableData.length > 1">
+    {{ tableData.length }} projects found
+  </p>
   <el-table :data="tableData" class="w-full">
     <el-table-column label="Name">
       <template #default="scope">
-        <span>{{ scope.row.name }}</span>
+        <el-popover trigger="hover" placement="top" width="auto" title="Project">
+          <template #default>
+            <span>ID: {{ scope.row._id }}</span>
+          </template>
+          <template #reference>
+            <span class="cursor-pointer">{{ scope.row.name }}</span>
+          </template>
+        </el-popover>
       </template>
     </el-table-column>
     <el-table-column label="Created">

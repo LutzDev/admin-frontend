@@ -12,7 +12,7 @@ interface Project {
   start: string
   end: string
   active?: Boolean
-  project?: string
+  dialogue?: string
 }
 
 const current = new Date()
@@ -92,7 +92,7 @@ const handleDelete = async (index: number, row: Project) => {
   try {
     const resp = await axios({
       method: 'delete',
-      url: `http://127.0.0.1:3000/v1/dialogue/${row._id}/${row.project}`,
+      url: `http://127.0.0.1:3000/v1/dialogue/${row._id}/${row.dialogue}`,
     })
     ElNotification({
       title: 'Success',
@@ -154,12 +154,14 @@ onMounted(() => {
   <el-table :data="tableData" class="w-full">
     <el-table-column label="Name">
       <template #default="scope">
-        <span>{{ scope.row.name }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="Created">
-      <template #default="scope">
-        <span>{{ scope.row.created }}</span>
+        <el-popover trigger="hover" placement="top" width="auto" title="Project">
+          <template #default>
+            <span>ID: {{ scope.row._id }}</span>
+          </template>
+          <template #reference>
+            <span class="cursor-pointer">{{ scope.row.name }}</span>
+          </template>
+        </el-popover>
       </template>
     </el-table-column>
     <el-table-column label="Status">
@@ -170,12 +172,27 @@ onMounted(() => {
         </StatusTag>
       </template>
     </el-table-column>
+    <el-table-column label="Dialog">
+      <template #default="scope">
+        <p v-if="scope.row.dialogue">
+          <el-popover trigger="hover" placement="top" width="auto" title="Linked dialog">
+            <template #default>
+              <span>ID: {{ scope.row.dialogue }}</span>
+            </template>
+            <template #reference>
+              <div class="text-blue text-base cursor-pointer" i="carbon-link" />
+            </template>
+          </el-popover>
+        </p>
+        <div v-else class="text-base" i="carbon-unlink" />
+      </template>
+    </el-table-column>
     <el-table-column label="Operations">
       <template #default="scope">
-        <el-button v-if="!scope.row.project" type="success" size="small" @click="drawer = true; modalType = 'Add'; activeScope = scope.$index ">
-          Add
+        <el-button v-if="!scope.row.dialogue" type="success" size="small" @click="drawer = true; modalType = 'Add'; activeScope = scope.$index ">
+          Add dialog
         </el-button>
-        <div v-if="scope.row.project">
+        <div v-else>
           <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index ">
             Update
           </el-button>

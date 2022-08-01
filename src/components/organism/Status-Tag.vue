@@ -14,7 +14,7 @@ const props = defineProps({
         <slot />
       </template>
       <template #reference>
-        <el-tag type="success">
+        <el-tag type="success" class="cursor-pointer">
           Active
         </el-tag>
       </template>
@@ -24,7 +24,7 @@ const props = defineProps({
         <slot />
       </template>
       <template #reference>
-        <el-tag type="warning">
+        <el-tag type="warning" class="cursor-pointer">
           Inactive
         </el-tag>
       </template>
