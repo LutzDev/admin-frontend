@@ -29,7 +29,7 @@ const handleClose = (key: string, keyPath: string[]) => {
       <el-menu-item index="/intervention/project">
         Manage project
       </el-menu-item>
-      <el-menu-item index="/intervention/dialogue">
+      <el-menu-item index="/intervention/dialog">
         Manage dialog
       </el-menu-item>
       <el-menu-item index="/intervention/variable">

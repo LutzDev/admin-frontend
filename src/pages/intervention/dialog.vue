@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import type { Dayjs } from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import axios from 'axios'
 import type { FormInstance } from 'element-plus'
@@ -7,12 +8,16 @@ dayjs.extend(isBetween)
 
 interface Project {
   _id?: string
-  created: string
+  last_updated: Dayjs
   name: string
-  start: string
-  end: string
+  chatbot: {
+    type: string
+    port?: number
+    id?: string
+  }
+  time_span: Array<string>
   active?: Boolean
-  dialogue?: string
+  dialog?: string
 }
 
 const current = new Date()
@@ -33,13 +38,6 @@ const getFileData = (data: Object) => {
   fileData = data
 }
 
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl)
-    return
-  formEl.resetFields()
-  drawer.value = false
-}
-
 const handleTable = async () => {
   try {
     tableData.value = []
@@ -49,7 +47,7 @@ const handleTable = async () => {
     })
     const data: Array<Project> = resp.data
     for (const project of data) {
-      project.active = dayjs(current).isBetween(project.start, project.end, 'day')
+      project.active = dayjs(current).isBetween(dayjs(project.time_span[0]), dayjs(project.time_span[1]), 'day')
       tableData.value.push(project)
     }
   }
@@ -67,7 +65,7 @@ const handleEdit = async (data: Project) => {
   try {
     const resp = await axios({
       method: 'put',
-      url: `http://127.0.0.1:3000/v1/dialogue/${data.dialogue}`,
+      url: `http://127.0.0.1:3000/v1/dialog/${data.dialog}`,
       data: fileData,
     })
     ElNotification({
@@ -92,7 +90,7 @@ const handleDelete = async (index: number, row: Project) => {
   try {
     const resp = await axios({
       method: 'delete',
-      url: `http://127.0.0.1:3000/v1/dialogue/${row._id}/${row.dialogue}`,
+      url: `http://127.0.0.1:3000/v1/dialog/${row._id}/${row.dialog}`,
     })
     ElNotification({
       title: 'Success',
@@ -114,15 +112,11 @@ const handleDelete = async (index: number, row: Project) => {
 
 const handleAdd = async (data: Project) => {
   try {
-    console.log(data._id)
-
     const resp = await axios({
       method: 'post',
-      url: `http://127.0.0.1:3000/v1/dialogue/${data._id}`,
+      url: `http://127.0.0.1:3000/v1/dialog/${data._id}`,
       data: fileData,
     })
-
-    console.log(resp.data)
 
     ElNotification({
       title: 'Success',
@@ -167,17 +161,17 @@ onMounted(() => {
     <el-table-column label="Status">
       <template #default="scope">
         <StatusTag :is-active="scope.row.active">
-          <p>Start: {{ scope.row.start }}</p>
-          <p>End: {{ scope.row.end }}</p>
+          <p>Start: {{ dayjs(scope.row.time_span[0]).format('YYYY-MM-DD') }}</p>
+          <p>End: {{ dayjs(scope.row.time_span[1]).format('YYYY-MM-DD') }}</p>
         </StatusTag>
       </template>
     </el-table-column>
     <el-table-column label="Dialog">
       <template #default="scope">
-        <p v-if="scope.row.dialogue">
+        <p v-if="scope.row.dialog">
           <el-popover trigger="hover" placement="top" width="auto" title="Linked dialog">
             <template #default>
-              <span>ID: {{ scope.row.dialogue }}</span>
+              <span>ID: {{ scope.row.dialog }}</span>
             </template>
             <template #reference>
               <div class="text-blue text-base cursor-pointer" i="carbon-link" />
@@ -189,7 +183,7 @@ onMounted(() => {
     </el-table-column>
     <el-table-column label="Operations">
       <template #default="scope">
-        <el-button v-if="!scope.row.dialogue" type="success" size="small" @click="drawer = true; modalType = 'Add'; activeScope = scope.$index ">
+        <el-button v-if="!scope.row.dialog" type="success" size="small" @click="drawer = true; modalType = 'Add'; activeScope = scope.$index ">
           Add dialog
         </el-button>
         <div v-else>
@@ -218,8 +212,7 @@ onMounted(() => {
       <div v-if="modalType === 'Add'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            <!-- Add a dialogue to the project <span class="underline">{{ tableData[Number(activeScope)].name }}</span>. -->
-            Add a dialogue to the project.
+            Add a dialog to the project.
           </p>
           <el-form
             ref="formRef"
@@ -231,7 +224,7 @@ onMounted(() => {
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleAdd(tableData[Number(activeScope)])">
-                Add dialogue
+                Add dialog
               </el-button>
             </el-form-item>
           </el-form>
@@ -240,7 +233,7 @@ onMounted(() => {
       <div v-if="modalType === 'Edit'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            Update a dialogue.
+            Update a dialog.
           </p>
           <el-form
             ref="formRef"
@@ -252,7 +245,7 @@ onMounted(() => {
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleEdit(tableData[Number(activeScope)])">
-                Update dialogue
+                Update dialog
               </el-button>
             </el-form-item>
           </el-form>

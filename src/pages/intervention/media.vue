@@ -103,7 +103,7 @@ const handleAdd = () => {
       <div v-if="modalType === 'Upload'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            Here you can upload a dialogue file (.json).
+            Here you can upload a dialog file (.json).
           </p>
           <div class="space-y-2">
             <p class="text-size-sm">

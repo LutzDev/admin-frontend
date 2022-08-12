@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import axios from 'axios'
@@ -7,12 +8,16 @@ dayjs.extend(isBetween)
 
 interface Project {
   _id?: string
-  created: string
+  last_updated: Dayjs
   name: string
-  start: string
-  end: string
+  chatbot: {
+    type: string
+    port?: number
+    id?: string
+  }
+  time_span: Array<string>
   active?: Boolean
-  dialogue?: string
+  dialog?: string
 }
 
 const current = new Date()
@@ -26,13 +31,24 @@ const formRef = ref<FormInstance>()
 const form = reactive({
   name: '',
   date: '',
+  chatbot: '',
+  bot_id: '',
+  bot_port: 0,
 })
+
+const clearInput = () => {
+  form.name = ''
+  form.date = ''
+  form.chatbot = ''
+  form.bot_id = ''
+  form.bot_port = 0
+}
 
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl)
     return
   formEl.resetFields()
-  drawer.value = false
+  clearInput()
 }
 
 const handleTable = async () => {
@@ -44,7 +60,7 @@ const handleTable = async () => {
     })
     const data: Array<Project> = resp.data
     for (const project of data) {
-      project.active = dayjs(current).isBetween(project.start, project.end, 'day')
+      project.active = dayjs(current).isBetween(dayjs(project.time_span[0]), dayjs(project.time_span[1]), 'day')
       tableData.value.push(project)
     }
   }
@@ -64,15 +80,27 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Project)
   await FormInstance.validate(async (valid, fields) => {
     if (valid) {
       try {
+        current.setDate(current.getDate())
+        const project: Project = {
+          last_updated: dayjs(current.setDate(current.getDate())),
+          name: form.name,
+          chatbot: {
+            type: form.chatbot,
+          },
+          time_span: JSON.parse(JSON.stringify(form.date)),
+        }
+
+        if (form.chatbot === 'Botpress')
+          project.chatbot.id = form.bot_id
+        else
+          project.chatbot.port = form.bot_port
+
         const resp = await axios({
           method: 'put',
           url: `http://127.0.0.1:3000/v1/project/${data._id}`,
-          data: {
-            name: form.name,
-            start: dayjs(form.date[0]).format('YYYY-MM-DD'),
-            end: dayjs(form.date[1]).format('YYYY-MM-DD'),
-          },
+          data: project,
         })
+
         ElNotification({
           title: 'Success',
           message: `${resp.data.message}`,
@@ -80,6 +108,7 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Project)
           position: 'top-left',
         })
         resetForm(FormInstance)
+        drawer.value = false
         handleTable()
       }
       catch (error: any) {
@@ -104,7 +133,7 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Project)
 
 const handleDelete = async (index: number, row: Project) => {
   try {
-    if (!row.dialogue) {
+    if (!row.dialog) {
       const resp = await axios({
         method: 'delete',
         url: `http://127.0.0.1:3000/v1/project/${row._id}`,
@@ -121,7 +150,7 @@ const handleDelete = async (index: number, row: Project) => {
     else {
       ElNotification({
         title: 'Warning',
-        message: `Before that, delete the linked dialog with the ID: ${row.dialogue}`,
+        message: `Before that, delete the linked dialog with the ID: ${row.dialog}`,
         type: 'warning',
         position: 'top-left',
       })
@@ -144,14 +173,21 @@ const handleAdd = async (FormInstance: FormInstance | undefined) => {
     if (valid) {
       try {
         current.setDate(current.getDate())
-        const projectStart = dayjs(form.date[0]).format('YYYY-MM-DD')
-        const projectEnd = dayjs(form.date[1]).format('YYYY-MM-DD')
         const project: Project = {
-          created: dayjs(current.setDate(current.getDate())).format('YYYY-MM-DD'),
+          last_updated: dayjs(current.setDate(current.getDate())),
           name: form.name,
-          start: projectStart,
-          end: projectEnd,
+          chatbot: {
+            type: form.chatbot,
+          },
+          time_span: JSON.parse(JSON.stringify(form.date)),
         }
+
+        if (form.chatbot === 'Botpress')
+          project.chatbot.id = form.bot_id
+
+        else
+          project.chatbot.port = form.bot_port
+
         const resp = await axios({
           method: 'post',
           url: 'http://127.0.0.1:3000/v1/project',
@@ -164,6 +200,7 @@ const handleAdd = async (FormInstance: FormInstance | undefined) => {
           position: 'top-left',
         })
         resetForm(FormInstance)
+        drawer.value = false
         handleTable()
       }
       catch (error: any) {
@@ -189,6 +226,17 @@ const handleAdd = async (FormInstance: FormInstance | undefined) => {
 onMounted(() => {
   handleTable()
 })
+
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('You still have unsaved data, proceed?')
+    .then(() => {
+      resetForm(formRef.value)
+      done()
+    })
+    .catch(() => {
+      console.log('Error catched')
+    })
+}
 </script>
 
 <template>
@@ -209,22 +257,41 @@ onMounted(() => {
         </el-popover>
       </template>
     </el-table-column>
-    <el-table-column label="Created">
+    <el-table-column label="Zuletzt geändert">
       <template #default="scope">
-        <span>{{ scope.row.created }}</span>
+        <span>{{ dayjs(scope.row.last_updated).format('YYYY-MM-DD') }}</span>
       </template>
     </el-table-column>
     <el-table-column label="Status">
       <template #default="scope">
         <StatusTag :is-active="scope.row.active">
-          <p>Start: {{ scope.row.start }}</p>
-          <p>End: {{ scope.row.end }}</p>
+          <p>Start: {{ dayjs(scope.row.time_span[0]).format('YYYY-MM-DD') }}</p>
+          <p>End: {{ dayjs(scope.row.time_span[1]).format('YYYY-MM-DD') }}</p>
         </StatusTag>
+      </template>
+    </el-table-column>
+    <el-table-column label="Chatbot">
+      <template #default="scope">
+        <el-tag
+          class="mx-1"
+          effect="light"
+          type="info"
+        >
+          <el-popover trigger="hover" placement="top" width="auto" title="Chatbot">
+            <template #default>
+              <span v-if="scope.row.chatbot.id">ID: {{ scope.row.chatbot.id }}</span>
+              <span v-else>Port: {{ scope.row.chatbot.port }}</span>
+            </template>
+            <template #reference>
+              <span class="cursor-pointer"> {{ scope.row.chatbot.type }}</span>
+            </template>
+          </el-popover>
+        </el-tag>
       </template>
     </el-table-column>
     <el-table-column label="Operations">
       <template #default="scope">
-        <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index ">
+        <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index; form.name = tableData[Number(scope.$index)].name; form.date = JSON.parse(JSON.stringify(tableData[Number(scope.$index)].time_span)); form.chatbot = tableData[Number(scope.$index)].chatbot.type; form.bot_id = tableData[Number(scope.$index)].chatbot.id ?? ''; form.bot_port = tableData[Number(scope.$index)].chatbot.port ?? 0">
           Edit
         </el-button>
         <el-popconfirm
@@ -246,7 +313,7 @@ onMounted(() => {
   <el-button class="mt-4" type="default" @click="drawer = true; modalType = 'Add'">
     Add Project
   </el-button>
-  <Drawer v-model="drawer" :title="`${modalType}`">
+  <Drawer v-model="drawer" :title="`${modalType}`" :before-close="handleClose">
     <template #modal>
       <div v-if="modalType === 'Add'">
         <div class="space-y-8">
@@ -272,8 +339,20 @@ onMounted(() => {
                   end-placeholder="End date"
                 />
               </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="handleAdd(formRef)">
+              <el-form-item required label="Chatbot Framework" prop="chatbot">
+                <el-radio-group v-model="form.chatbot">
+                  <el-radio border label="Botpress" />
+                  <el-radio border label="Rasa" />
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item v-if="form.chatbot === 'Botpress'" label="Botpress ID" prop="Botpress id">
+                <el-input v-model="form.bot_id" placeholder="Chatbot flow name" />
+              </el-form-item>
+              <el-form-item v-if="form.chatbot === 'Rasa'" label="Rasa Port" prop="Rasa port">
+                <el-input-number v-model="form.bot_port" :controls="false" required placeholder="Rasa port number" />
+              </el-form-item>
+              <el-form-item class="mt-8">
+                <el-button type="primary" @click="handleAdd(formRef);">
                   Create
                 </el-button>
                 <el-button @click="resetForm(formRef)">
@@ -289,33 +368,47 @@ onMounted(() => {
           <p class="text-size-sm">
             Here you can edit existing projects.
           </p>
-          <el-form
-            ref="formRef"
-            :model="form"
-            label-position="top"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="Project name" prop="name" required>
-              <el-input v-model="form.name" placeholder="Name of intervnetion" maxlength="20" show-word-limit clearable />
-            </el-form-item>
-            <el-form-item label="Choose a time frame" required prop="date">
-              <el-date-picker
-                v-model="form.date"
-                type="daterange"
-                range-separator="to"
-                start-placeholder="Start date"
-                end-placeholder="End date"
-              />
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="handleEdit(formRef, tableData[Number(activeScope)])">
-                Update
-              </el-button>
-              <el-button @click="resetForm(formRef)">
-                Reset
-              </el-button>
-            </el-form-item>
-          </el-form>
+          <div>
+            <el-form
+              ref="formRef"
+              :model="form"
+              label-position="top"
+              class="demo-ruleForm"
+            >
+              <el-form-item label="Project name" prop="name" required>
+                <el-input v-model="form.name" placeholder="Name of intervnetion" maxlength="20" show-word-limit clearable />
+              </el-form-item>
+              <el-form-item label="Choose a time frame" required prop="date">
+                <el-date-picker
+                  v-model="form.date"
+                  type="daterange"
+                  range-separator="to"
+                  start-placeholder="Start date"
+                  end-placeholder="End date"
+                />
+              </el-form-item>
+              <el-form-item required label="Chatbot Framework" prop="chatbot">
+                <el-radio-group v-model="form.chatbot">
+                  <el-radio border label="Botpress" />
+                  <el-radio border label="Rasa" />
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item v-if="form.chatbot === 'Botpress'" label="Botpress ID" prop="Botpress id">
+                <el-input v-model="form.bot_id" placeholder="Chatbot flow name" />
+              </el-form-item>
+              <el-form-item v-if="form.chatbot === 'Rasa'" label="Rasa Port" prop="Rasa port">
+                <el-input-number v-model="form.bot_port" :controls="false" required placeholder="Rasa port number" />
+              </el-form-item>
+              <el-form-item class="mt-8">
+                <el-button type="primary" @click="handleEdit(formRef, tableData[Number(activeScope)]); drawer = false">
+                  Update
+                </el-button>
+                <el-button @click="resetForm(formRef)">
+                  Reset
+                </el-button>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </div>
     </template>
