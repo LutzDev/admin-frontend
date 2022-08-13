@@ -124,7 +124,7 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Variable
 
         const resp = await axios({
           method: 'put',
-          url: `http://127.0.0.1:3000/v1/variable/${data._id}`,
+          url: `http://127.0.0.1:3000/v1/variable/${data._id}/${form.project}`,
           data: variable,
         })
 
@@ -135,6 +135,7 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Variable
           position: 'top-left',
         })
         resetForm(FormInstance)
+        drawer.value = false
         handleTable()
       }
       catch (error: any) {
@@ -157,30 +158,20 @@ const handleEdit = async (FormInstance: FormInstance | undefined, data: Variable
   })
 }
 
-const handleDelete = async (index: number, row: Project) => {
+const handleDelete = async (index: number, data: Variable) => {
   try {
-    if (!row.dialog) {
-      const resp = await axios({
-        method: 'delete',
-        url: `http://127.0.0.1:3000/v1/project/${row._id}`,
-      })
+    const resp = await axios({
+      method: 'delete',
+      url: `http://127.0.0.1:3000/v1/variable/${data._id}`,
+    })
 
-      ElNotification({
-        title: 'Success',
-        message: `${resp.data.message}`,
-        type: 'success',
-        position: 'top-left',
-      })
-      handleTable()
-    }
-    else {
-      ElNotification({
-        title: 'Warning',
-        message: `Before that, delete the linked dialog with the ID: ${row.dialog}`,
-        type: 'warning',
-        position: 'top-left',
-      })
-    }
+    ElNotification({
+      title: 'Success',
+      message: `${resp.data.message}`,
+      type: 'success',
+      position: 'top-left',
+    })
+    handleTable()
   }
   catch (error: any) {
     ElNotification({
