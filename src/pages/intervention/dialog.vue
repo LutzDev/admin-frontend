@@ -68,6 +68,7 @@ const handleEdit = async (data: Project) => {
       url: `http://127.0.0.1:3000/v1/dialog/${data.dialog}`,
       data: fileData,
     })
+    drawer.value = false
     ElNotification({
       title: 'Success',
       message: `${resp.data.message}`,
@@ -117,7 +118,7 @@ const handleAdd = async (data: Project) => {
       url: `http://127.0.0.1:3000/v1/dialog/${data._id}`,
       data: fileData,
     })
-
+    drawer.value = false
     ElNotification({
       title: 'Success',
       message: `${resp.data.message}`,
@@ -148,7 +149,7 @@ onMounted(() => {
   <el-table :data="tableData" class="w-full">
     <el-table-column label="Name">
       <template #default="scope">
-        <el-popover trigger="hover" placement="top" width="auto" title="Project">
+        <el-popover trigger="hover" placement="top" width="auto" title="Projekt">
           <template #default>
             <span>ID: {{ scope.row._id }}</span>
           </template>
@@ -169,7 +170,7 @@ onMounted(() => {
     <el-table-column label="Dialog">
       <template #default="scope">
         <p v-if="scope.row.dialog">
-          <el-popover trigger="hover" placement="top" width="auto" title="Linked dialog">
+          <el-popover trigger="hover" placement="top" width="auto" title="Verbundener Dialog">
             <template #default>
               <span>ID: {{ scope.row.dialog }}</span>
             </template>
@@ -181,13 +182,13 @@ onMounted(() => {
         <div v-else class="text-base" i="carbon-unlink" />
       </template>
     </el-table-column>
-    <el-table-column label="Operations">
+    <el-table-column label="Operationen">
       <template #default="scope">
-        <el-button v-if="!scope.row.dialog" type="success" size="small" @click="drawer = true; modalType = 'Add'; activeScope = scope.$index ">
-          Add dialog
+        <el-button v-if="!scope.row.dialog" type="success" size="small" @click="drawer = true; modalType = 'Hinzufügen'; activeScope = scope.$index ">
+          Dialog hinzufügen
         </el-button>
         <div v-else>
-          <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index ">
+          <el-button size="small" @click="drawer = true; modalType = 'Bearbeiten'; activeScope = scope.$index ">
             Update
           </el-button>
           <el-popconfirm
@@ -199,7 +200,7 @@ onMounted(() => {
                 size="small"
                 type="danger"
               >
-                Delete
+                Löschen
               </el-button>
             </template>
           </el-popconfirm>
@@ -209,43 +210,43 @@ onMounted(() => {
   </el-table>
   <Drawer v-model="drawer" :title="`${modalType}`">
     <template #modal>
-      <div v-if="modalType === 'Add'">
+      <div v-if="modalType === 'Hinzufügen'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            Add a dialog to the project.
+            Fügen Sie einen Dialog einem Projekt hinzu.
           </p>
           <el-form
             ref="formRef"
             :model="form"
             label-position="top"
           >
-            <el-form-item label="Choose a file from the disk" prop="file">
+            <el-form-item label="Wählen Sie eine Datei aus." prop="file">
               <FileReader accept=".json" :required="true" @file-data="getFileData" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleAdd(tableData[Number(activeScope)])">
-                Add dialog
+                Dialog hinzufügen
               </el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
-      <div v-if="modalType === 'Edit'">
+      <div v-if="modalType === 'Bearbeiten'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            Update a dialog.
+            Hier kann der ausgewählte Dialog aktualisiert werden.
           </p>
           <el-form
             ref="formRef"
             :model="form"
             label-position="top"
           >
-            <el-form-item label="Choose a file from the disk" prop="file">
+            <el-form-item label="Wählen Sie einen Datei aus." prop="file">
               <FileReader accept=".json" :required="true" @file-data="getFileData" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleEdit(tableData[Number(activeScope)])">
-                Update dialog
+                Update Dialog
               </el-button>
             </el-form-item>
           </el-form>

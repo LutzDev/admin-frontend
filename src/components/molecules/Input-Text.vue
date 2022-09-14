@@ -13,11 +13,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['inputValue'])
 const input = ref('')
-const test = () => {
-  console.log(input.value)
-}
 </script>
 
 <template>
-  <el-input v-model="input" :placeholder="`${props.placeholder}`" clearable :maxlength="`${props.limit}`" show-word-limit @change="test" @input="emit('inputValue', input)" />
+  <el-input v-model="input" :placeholder="`${props.placeholder}`" clearable :maxlength="`${props.limit}`" show-word-limit @input="emit('inputValue', input)" />
 </template>

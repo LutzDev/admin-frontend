@@ -5,24 +5,14 @@ let fileData: Object
 let inputData
 const getInputValue = (data: string) => {
   inputData = data
-  console.log(inputData)
-  handleUploadButton()
 }
 
 const getFileData = (data: Object) => {
   fileData = data
-  console.log(fileData)
-  handleUploadButton()
-}
-
-const handleUploadButton = () => {
-  console.log(fileData)
 }
 
 const upload = async () => {
   try {
-    // const resp = await axios.post('http://127.0.0.1:5040/transform/inky', fileData)
-    console.log(JSON.stringify(fileData))
     const resp = await axios({
       method: 'post',
       url: 'http://127.0.0.1:5040/transform/inky',

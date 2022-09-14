@@ -11,7 +11,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['fileData'])
 let json = ref<string>()
-const changed = (e) => {
+const changed = (e: any) => {
   const file: File = e.target.files[0]
   const reader: FileReader = new FileReader()
   reader.onloadend = (e) => {
@@ -23,14 +23,10 @@ const changed = (e) => {
   reader.readAsText(file)
 }
 const inputFile = ref(null)
-
-const checkSelection = () => {
-  console.log(inputFile.value.files.length)
-}
 </script>
 
 <template>
   <div>
-    <input ref="inputFile" :required="required" type="file" :accept="`${props.accept}`" @change="changed" @mouseenter="checkSelection">
+    <input ref="inputFile" :required="required" type="file" :accept="`${props.accept}`" @change="changed">
   </div>
 </template>

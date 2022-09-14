@@ -234,20 +234,19 @@ const handleClose = (done: () => void) => {
       done()
     })
     .catch(() => {
-      console.log('Error catched')
     })
 }
 </script>
 
 <template>
   <h1 class="mb-4 text-size-xl">
-    Manage projects
+    Verwalte Projekte
   </h1>
 
   <el-table :data="tableData" class="w-full">
     <el-table-column label="Name">
       <template #default="scope">
-        <el-popover trigger="hover" placement="top" width="auto" title="Project">
+        <el-popover trigger="hover" placement="top" width="auto" title="Projekt">
           <template #default>
             <span>ID: {{ scope.row._id }}</span>
           </template>
@@ -289,13 +288,13 @@ const handleClose = (done: () => void) => {
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="Operations">
+    <el-table-column label="Operationen">
       <template #default="scope">
-        <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index; form.name = tableData[Number(scope.$index)].name; form.date = JSON.parse(JSON.stringify(tableData[Number(scope.$index)].time_span)); form.chatbot = tableData[Number(scope.$index)].chatbot.type; form.bot_id = tableData[Number(scope.$index)].chatbot.id ?? ''; form.bot_port = tableData[Number(scope.$index)].chatbot.port ?? 0">
-          Edit
+        <el-button size="small" @click="drawer = true; modalType = 'Bearbeiten'; activeScope = scope.$index; form.name = tableData[Number(scope.$index)].name; form.date = JSON.parse(JSON.stringify(tableData[Number(scope.$index)].time_span)); form.chatbot = tableData[Number(scope.$index)].chatbot.type; form.bot_id = tableData[Number(scope.$index)].chatbot.id ?? ''; form.bot_port = tableData[Number(scope.$index)].chatbot.port ?? 0">
+          Bearbeiten
         </el-button>
         <el-popconfirm
-          title="Are you sure to delete this?"
+          title="Wollen Sie das Element wirklich löschen?"
           @confirm="handleDelete(scope.$index, scope.row)"
         >
           <template #reference>
@@ -303,19 +302,19 @@ const handleClose = (done: () => void) => {
               size="small"
               type="danger"
             >
-              Delete
+              Löschen
             </el-button>
           </template>
         </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
-  <el-button class="mt-4" type="default" @click="drawer = true; modalType = 'Add'">
-    Add Project
+  <el-button class="mt-4" type="default" @click="drawer = true; modalType = 'Hinzufügen'">
+    Projekt hinzufügen
   </el-button>
   <Drawer v-model="drawer" :title="`${modalType}`" :before-close="handleClose">
     <template #modal>
-      <div v-if="modalType === 'Add'">
+      <div v-if="modalType === 'Hinzufügen'">
         <div class="space-y-8">
           <p class="text-size-sm">
             Fügen Sie ein Projekt hinzu. Informationen, die mit einem Stern gekennzeichnet sind, sind zum Anlegen notwendig.
@@ -327,16 +326,16 @@ const handleClose = (done: () => void) => {
               label-position="top"
               class="demo-ruleForm"
             >
-              <el-form-item label="Project name" prop="name" required>
-                <el-input v-model="form.name" placeholder="Name of intervnetion" maxlength="20" show-word-limit clearable />
+              <el-form-item label="Projektname" prop="name" required>
+                <el-input v-model="form.name" placeholder="Name der Intervnetion" maxlength="20" show-word-limit clearable />
               </el-form-item>
-              <el-form-item label="Choose a time frame" required prop="date">
+              <el-form-item label="Wähle eine Zeitfenster" required prop="date">
                 <el-date-picker
                   v-model="form.date"
                   type="daterange"
-                  range-separator="to"
-                  start-placeholder="Start date"
-                  end-placeholder="End date"
+                  range-separator="bis"
+                  start-placeholder="Startdatum"
+                  end-placeholder="Enddatum"
                 />
               </el-form-item>
               <el-form-item required label="Chatbot Framework" prop="chatbot">
@@ -346,27 +345,27 @@ const handleClose = (done: () => void) => {
                 </el-radio-group>
               </el-form-item>
               <el-form-item v-if="form.chatbot === 'Botpress'" label="Botpress ID" prop="Botpress id">
-                <el-input v-model="form.bot_id" placeholder="Chatbot flow name" />
+                <el-input v-model="form.bot_id" placeholder="Botpress ID eingeben" />
               </el-form-item>
               <el-form-item v-if="form.chatbot === 'Rasa'" label="Rasa Port" prop="Rasa port">
                 <el-input-number v-model="form.bot_port" :controls="false" required placeholder="Rasa port number" />
               </el-form-item>
               <el-form-item class="mt-8">
                 <el-button type="primary" @click="handleAdd(formRef);">
-                  Create
+                  Projekt erstellen
                 </el-button>
                 <el-button @click="resetForm(formRef)">
-                  Reset
+                  Zurücksetzen
                 </el-button>
               </el-form-item>
             </el-form>
           </div>
         </div>
       </div>
-      <div v-if="modalType === 'Edit'">
+      <div v-if="modalType === 'Bearbeiten'">
         <div class="space-y-8">
           <p class="text-size-sm">
-            Here you can edit existing projects.
+            Hier können bestehende Projekte bearbeiten.
           </p>
           <div>
             <el-form
@@ -375,10 +374,10 @@ const handleClose = (done: () => void) => {
               label-position="top"
               class="demo-ruleForm"
             >
-              <el-form-item label="Project name" prop="name" required>
-                <el-input v-model="form.name" placeholder="Name of intervnetion" maxlength="20" show-word-limit clearable />
+              <el-form-item label="Projektname" prop="name" required>
+                <el-input v-model="form.name" placeholder="Name der Intervnetion" maxlength="20" show-word-limit clearable />
               </el-form-item>
-              <el-form-item label="Choose a time frame" required prop="date">
+              <el-form-item label="Wähle eine Zeitfenster" required prop="date">
                 <el-date-picker
                   v-model="form.date"
                   type="daterange"
@@ -394,17 +393,17 @@ const handleClose = (done: () => void) => {
                 </el-radio-group>
               </el-form-item>
               <el-form-item v-if="form.chatbot === 'Botpress'" label="Botpress ID" prop="Botpress id">
-                <el-input v-model="form.bot_id" placeholder="Chatbot flow name" />
+                <el-input v-model="form.bot_id" placeholder="Botpress ID eingeben" />
               </el-form-item>
               <el-form-item v-if="form.chatbot === 'Rasa'" label="Rasa Port" prop="Rasa port">
                 <el-input-number v-model="form.bot_port" :controls="false" required placeholder="Rasa port number" />
               </el-form-item>
               <el-form-item class="mt-8">
                 <el-button type="primary" @click="handleEdit(formRef, tableData[Number(activeScope)]); drawer = false">
-                  Update
+                  Updaten
                 </el-button>
                 <el-button @click="resetForm(formRef)">
-                  Reset
+                  Zurücksetzen
                 </el-button>
               </el-form-item>
             </el-form>

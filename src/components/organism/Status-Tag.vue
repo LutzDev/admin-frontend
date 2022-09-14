@@ -15,7 +15,7 @@ const props = defineProps({
       </template>
       <template #reference>
         <el-tag type="success" class="cursor-pointer">
-          Active
+          Aktiv
         </el-tag>
       </template>
     </el-popover>
@@ -25,7 +25,7 @@ const props = defineProps({
       </template>
       <template #reference>
         <el-tag type="warning" class="cursor-pointer">
-          Inactive
+          Inaktiv
         </el-tag>
       </template>
     </el-popover>

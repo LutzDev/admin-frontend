@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 const isCollapse = ref(true)
 const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
 }
 const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
+
 }
 </script>
 
@@ -18,36 +17,33 @@ const handleClose = (key: string, keyPath: string[]) => {
   >
     <el-menu-item index="/">
       <div class="mr-2" i="carbon-home" />
-      <span>Home</span>
+      <span>Startseiten</span>
     </el-menu-item>
 
     <el-sub-menu index="1">
       <template #title>
         <div class="mr-2" i="carbon-chat" />
-        <span>Interventions</span>
+        <span>Interventionen</span>
       </template>
       <el-menu-item index="/intervention/project">
-        Manage project
+        Projekte verwalten
       </el-menu-item>
       <el-menu-item index="/intervention/dialog">
-        Manage dialog
+        Dialoge verwalten
       </el-menu-item>
       <el-menu-item index="/intervention/variable">
-        Manage variables
-      </el-menu-item>
-      <el-menu-item disabled index="/intervention/media">
-        Upload media
+        Variablen verwalten
       </el-menu-item>
     </el-sub-menu>
 
     <el-menu-item index="user" disabled>
       <div class="mr-2" i="carbon-user" />
-      <span>User</span>
+      <span>Nutzer</span>
     </el-menu-item>
 
     <el-menu-item index="settings" disabled>
       <div class="mr-2" i="carbon-settings" />
-      <span>Settings</span>
+      <span>Einstelungen</span>
     </el-menu-item>
   </el-menu>
 </template>

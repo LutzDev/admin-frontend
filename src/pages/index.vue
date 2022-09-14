@@ -2,7 +2,8 @@
 </script>
 
 <template>
-  <h1>Home</h1>
+  <h1>Startseite</h1>
+  <p>Interventionen können unter dem Menüpunkt Interventionen verwaltet werden.</p>
 </template>
 
 <route lang="yaml">

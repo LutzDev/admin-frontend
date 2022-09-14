@@ -235,14 +235,14 @@ const handleClose = (done: () => void) => {
       done()
     })
     .catch(() => {
-      console.log('Error catched')
+      console.log('Error caught')
     })
 }
 </script>
 
 <template>
   <h1 class="mb-4 text-size-xl">
-    Manage variables
+    Variablen verwalten
   </h1>
   <el-table :data="variableData" class="w-full">
     <el-table-column label="Name">
@@ -257,12 +257,12 @@ const handleClose = (done: () => void) => {
         </el-popover>
       </template>
     </el-table-column>
-    <el-table-column label="Value">
+    <el-table-column label="Wert">
       <template #default="scope">
         <span>{{ scope.row.value }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="Projects">
+    <el-table-column label="Projekte">
       <template #default="scope">
         <el-tag
           v-for="(project, index) in scope.row.projects" :key="index"
@@ -270,7 +270,7 @@ const handleClose = (done: () => void) => {
           effect="light"
           type="info"
         >
-          <el-popover trigger="hover" placement="top" width="auto" title="Project">
+          <el-popover trigger="hover" placement="top" width="auto" title="Projekt">
             <template #default>
               <span>ID: {{ project._id }}</span>
             </template>
@@ -281,13 +281,13 @@ const handleClose = (done: () => void) => {
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column label="Operations">
+    <el-table-column label="Operationen">
       <template #default="scope">
-        <el-button size="small" @click="drawer = true; modalType = 'Edit'; activeScope = scope.$index; form.key = variableData[Number(scope.$index)].key.replace('$', ''); form.value = variableData[Number(scope.$index)].value; form.project = JSON.parse(JSON.stringify(variableData[Number(scope.$index)].projects?.map(project => project._id)))">
-          Edit
+        <el-button size="small" @click="drawer = true; modalType = 'Bearbeiten'; activeScope = scope.$index; form.key = variableData[Number(scope.$index)].key.replace('$', ''); form.value = variableData[Number(scope.$index)].value; form.project = JSON.parse(JSON.stringify(variableData[Number(scope.$index)].projects?.map(project => project._id)))">
+          Bearbeiten
         </el-button>
         <el-popconfirm
-          title="Are you sure to delete this?"
+          title="Wollen Sie das Element wirklich löschen?"
           @confirm="handleDelete(scope.$index, scope.row)"
         >
           <template #reference>
@@ -295,19 +295,19 @@ const handleClose = (done: () => void) => {
               size="small"
               type="danger"
             >
-              Delete
+              Löschen
             </el-button>
           </template>
         </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
-  <el-button class="mt-4" type="default" @click="drawer = true; modalType = 'Add'">
-    Add variable
+  <el-button class="mt-4" type="default" @click="drawer = true; modalType = 'Hinzufügen'">
+    Variable hinzufügen
   </el-button>
   <Drawer v-model="drawer" :title="`${modalType}`" :before-close="handleClose">
     <template #modal>
-      <div v-if="modalType === 'Add'">
+      <div v-if="modalType === 'Hinzufügen'">
         <div class="space-y-8">
           <p class="text-size-sm">
             Fügen Sie eine Variable hinzu. Informationen, die mit einem Stern gekennzeichnet sind, sind zum Anlegen notwendig.
@@ -319,7 +319,7 @@ const handleClose = (done: () => void) => {
               label-position="top"
               class="space-y-8"
             >
-              <el-form-item label="Choose variable name." prop="key" required>
+              <el-form-item label="Wählen Sie einen Variablennamen" prop="key" required>
                 <el-input
                   v-model="form.key"
                   placeholder="variableName"
@@ -334,10 +334,10 @@ const handleClose = (done: () => void) => {
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="Choose variable value" required prop="value">
+              <el-form-item label="Wählen Sie einen Variablenwert" required prop="value">
                 <el-input v-model="form.value" placeholder="Value" maxlength="40" show-word-limit clearable />
               </el-form-item>
-              <el-form-item label="Link to project" required prop="project">
+              <el-form-item label="In welchen Projekten soll die Variable zur Verfügung stehen?" required prop="project">
                 <el-select-v2
                   v-model="form.project"
                   filterable
@@ -349,17 +349,17 @@ const handleClose = (done: () => void) => {
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="handleAdd(formRef)">
-                  Create
+                  Variable erstellen
                 </el-button>
                 <el-button @click="resetForm(formRef)">
-                  Reset
+                  Zurücksetzen
                 </el-button>
               </el-form-item>
             </el-form>
           </div>
         </div>
       </div>
-      <div v-if="modalType === 'Edit'">
+      <div v-if="modalType === 'Bearbeiten'">
         <div class="space-y-8">
           <p class="text-size-sm">
             Bearbeiten Sie die gewählte Variable. Informationen, die mit einem Stern gekennzeichnet sind, sind zum Anlegen notwendig.
@@ -371,7 +371,7 @@ const handleClose = (done: () => void) => {
               label-position="top"
               class="space-y-8"
             >
-              <el-form-item label="Choose variable name." prop="key" required>
+              <el-form-item label="Wählen Sie einen Variablennamen" prop="key" required>
                 <el-input
                   v-model="form.key"
                   placeholder="variableName"
@@ -386,10 +386,10 @@ const handleClose = (done: () => void) => {
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="Choose variable value" required prop="value">
+              <el-form-item label="Wählen Sie einen Variablenwert" required prop="value">
                 <el-input v-model="form.value" placeholder="Value" maxlength="40" show-word-limit clearable />
               </el-form-item>
-              <el-form-item label="Link to project" required prop="project">
+              <el-form-item label="In welchen Projekten soll die Variable zur Verfügung stehen?" required prop="project">
                 <el-select-v2
                   v-model="form.project"
                   filterable
@@ -401,7 +401,7 @@ const handleClose = (done: () => void) => {
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" @click="handleEdit(formRef, variableData[Number(activeScope)]); drawer = false">
-                  Updaten
+                  Update Variable
                 </el-button>
               </el-form-item>
             </el-form>
