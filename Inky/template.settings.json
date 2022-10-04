@@ -1,0 +1,71 @@
+{
+   "customInkSnippets":[
+	  {
+		 "name":"IMTT",
+		 "submenu":[
+			 {
+				  "name":"Systemvariablen",
+				  "submenu":[
+					 {
+						"name":"Jahr",
+						"ink":"$systemYear"
+					 },
+					 {
+						  "name":"Monat",
+						  "ink":"$systemMonth"
+					 },
+					 {
+							 "name":"Tag",
+							 "ink":"$systemDay"
+					  },
+					  {
+							 "name":"Datum",
+							 "ink":"$systemDay.$systemMonth.$systemYear"
+					  }
+				  ]
+			   },
+			 {
+					 "name":"Projektvariable",
+					 "ink":"$projectVariable"
+				},
+				{
+					 "name":"Teilnehmervariable",
+					 "ink":"$participantName"
+				},
+			 {
+				 "separator": true
+			 },
+			  {
+				  "name":"Text",
+				  "ink":"=== sektionsname ===\n# Texte können über mehrere Zeilen verlaufen.\n# Jeder Absatz wird im Chat als einzelne Chatnachricht ausgegeben.\nErster Absatz, welcher als eigenständige Textnachricht dargestellt wird.\nZweiter Absatz, welcher als eigenständige Textnachricht dargestellt wird.\n...\n-> END"
+			   },
+			  { 
+				 "name":"Button",
+				 "ink":"=== sektionsname ===\n# Wichtig: Die Fragestellung muss in der Sektion davor erfolgen.\n# In den eckigen Klammern stehen die Antwortmöglichkeiten die im Chat angezeigt werden sollen.\n# Der Pfeil verweist auf die Sektion, welche durch das Drücken des Buttons aufgerufen werden soll. \n+ [Button text 1] -> section \n+ [Button text 2] -> section"
+			  },
+			  {
+				   "name":"Chatbot",
+				   "ink":"=== sektionsname ===\n# Der 'flowname' muss mit dem Namen des passenden Flows aus dem Chatbot-Framework ersetzt werden (Bsp. chatbot$init).\n# In den eckigen Klammern stehen die Antworten, die das Chatbot-Framework zurückgibt.\n# Der Pfeil verweist auf die Sektion, welche aufgerufen wird, wenn das Chatbot-Framework die passende Antwort liefert.\n>>> chatbot$flowname\n+ [Chatbot result 1] -> sectionname\n+ [Chatbot result 2] -> sectionname\n+ [Default] -> sectionname"
+				   },
+			  {
+				 "name":"Media",
+				 "submenu":[
+					{
+						  "name":"Bild",
+						   "ink":"=== sektionsname ===\n# https wird in der Vorlage schon angegeben. Ein Link auf eine externe Bild-Ressource muss deshalb ohne https nach \\/\\/ eingefügt werden.\n# Ein Verweis auf ein Bild-Ressource, welche in der Applikation abgelegt ist wird zum Beispiel wie folgt definiert: image$placehodler.png\n>>> image$https:\\/\\/\n-> END"
+					  },
+					{
+						 "name":"Video",
+						 "ink":"=== sektionsname ===\n# https wird in der Vorlage schon angegeben. Der Link muss deshalb ohne https nach \\/\\/ eingefügt werden.\n# Derzeit werden nur externe Video-Ressourcen unterstützt.\n>>> video$https:\\/\\/\n-> END"
+					},
+					{
+						   "name":"Datei",
+						   "ink":"=== sektionsname ===\n# https wird in der Vorlage schon angegeben. Der Link muss deshalb ohne https nach \\/\\/ eingefügt werden.\n# Derzeit werden nur externe Datei-Ressourcen unterstützt.\n>>> file$https:\\/\\/\n-> END"
+					  }
+				 ]
+			  }
+		 ]
+	  }
+   ],
+   "instructionPrefix":">>>"
+}
