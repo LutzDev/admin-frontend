@@ -60,6 +60,12 @@ Element Plus was used as the component library because it fully supports Vue3.
 
 **Documentation:** https://element-plus.org/en-US/
 
+
+## Specification file for Inky
+
+The file enables custom snippets for a project, if the file is copied to the root folder of a inky project.
+The file is located at ``Inky > template.settings.json``
+
 <br>
 
 ## Plugins
