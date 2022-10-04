@@ -1,11 +1,20 @@
+# Admin panel
 
-# Admin panel 
-The admin panel is used to manage interventions. Currently, projects, dialogs and variables can be managed. 
-The admin panel was implemented with the frontend framework Vue3. The template Vitesse is used as a starting point. 
+The admin panel is used to manage interventions. Currently, projects, dialogs and variables can be managed.
+The admin panel was implemented with the frontend framework Vue3. The template Vitesse is used as a starting point.
 
 **Vitesse:** https://github.com/antfu/vitesse
 
-<br>
+## Requirements
+
+The admin panel requires the following to run:
+
+- [VS Code](https://code.visualstudio.com) for Code editing
+- [Node](https://nodejs.org/en/) as JavaScript runtime environment
+
+Optional:
+
+- [Postman app](https://www.postman.com/downloads/) to test API-Endpoints is recommended
 
 ## Usage
 
@@ -44,16 +53,17 @@ docker run --rm -it -p 8080:80 vitesse:latest
 <br>
 
 ## Component library
+
 Element Plus was used as the component library because it fully supports Vue3.
 
 **Documentation:** https://element-plus.org/en-US/
 
-
 <br>
 
-
 ## Plugins
+
 The template vitesse comes with some plugins:
+
 - [Vue Router](https://github.com/vuejs/vue-router)
   - [`vite-plugin-pages`](https://github.com/hannoeru/vite-plugin-pages) - file system based routing
   - [`vite-plugin-vue-layouts`](https://github.com/JohnCampionJr/vite-plugin-vue-layouts) - layouts for pages
