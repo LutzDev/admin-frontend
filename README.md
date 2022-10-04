@@ -18,6 +18,8 @@ Optional:
 
 ## Usage
 
+To ensure communication between the services, the addresses (host+port) must be adapted.
+
 ### Development
 
 Just run and visit http://localhost:4000
